@@ -1,0 +1,30 @@
+version: '2'
+services:
+  php: 
+    build: ./docker
+    container_name: php
+    volumes:
+      - ./code:/var/www/code
+    expose:
+      - '9000'
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    volumes_from:
+      - php
+    ports:
+      - "80:80"
+
+  db-mysql:
+    image: mariadb
+    container_name: database
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=dbuser
+      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=phpproject
+    ports:
+      - "3306:3306"
